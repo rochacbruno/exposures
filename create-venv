@@ -1,0 +1,9 @@
+
+# centos 7 python 3 is broken. to create a venv:
+
+if [ ! -f venv/bin/activate ]; then
+    python3 -m venv --without-pip venv
+    source venv/bin/activate
+    curl https://bootstrap.pypa.io/get-pip.py | python
+    deactivate
+fi
