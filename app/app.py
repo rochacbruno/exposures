@@ -45,10 +45,18 @@ app.config['SWAGGER'] = {
 
 swagger = Swagger(app)
 
-class Validation(object):
-    def __init__(self, message="", status=200):
+class ValidationError(Exception):
+    def __init__(self, message="", status_code=200, payload=None):
+        Exception.__init__(self)
         self.message = message
-        self.status = status
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['message'] = self.message
+        return rv
 
 def validate_request (request, schema_id, swagger_spec):
     """ Validate a swagger request against a specified schema object within the
@@ -58,13 +66,11 @@ def validate_request (request, schema_id, swagger_spec):
         Validation: Returns a validation object [message,status]
     
     """
-    result = Validation ()
     try: 
         validate(request.json, schema_id, swagger_spec, root=__file__)
     except ValidationError as e:
         traceback.print_exc ()
-        result = Validation ("Validation Error: {0}".format (e), status=400)
-    return result
+        raise ValidationError ("Validation Error: {0}".format (e), status_code=400)
 
 @app.after_request
 def allow_origin(response):
@@ -77,8 +83,6 @@ def allow_origin(response):
 def get_exposure_value():
     """ Get exposure value. See swagger definition for further details. """
     validation = validate_request (request, 'exposureRequestSchema', 'swagger/getExposureValue.yml')
-    if not validation.status == 200:
-        return validation.message, validation.status
     return jsonify([
         {
             'start-time' : 0,
@@ -92,8 +96,6 @@ def get_exposure_value():
 def get_exposure_score():
     """ Get exposure score. See swagger spec for further details. """
     validation = validate_request (request, 'exposureScoreRequestSchema', 'swagger/getExposureScore.yml')
-    if not validation.status == 200:
-        return validation.message, validation.status
     return jsonify([
         {
             'start-time' : 0,
