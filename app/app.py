@@ -33,15 +33,11 @@ app.config['SWAGGER'] = {
     "specs": [
         {
             "version": "0.0.1",
-            "title": "Api v1",
+            "title": "API v1",
             "endpoint": 'v1_spec',
             "description": 'Exposures API - version 1',
             "route": '/v1/spec',
-            # rule_filter is optional
-            # it is a callable to filter the views to extract
-            "rule_filter": lambda rule: rule.endpoint.startswith(
-                'should_be_v1_only'
-            )
+            "rule_filter": lambda rule: rule.endpoint.startswith ('should_be_v1_only')
         }
     ]
 }
