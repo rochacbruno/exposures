@@ -1,0 +1,180 @@
+---
+swagger: '2.0'
+info:
+  title: Exposure API
+  description: API for environmental exposure models for NIH Data Translator program
+  contact:
+    responsibleOrganization: Data Translator Green Team
+    responsibleDeveloper: Data Translator Green Team
+    email: help@renci.org
+    url: www.renci.org
+  termsOfService: None Available
+  version: 0.0.1
+host: exposures.renci.org
+basePath: /api
+schemes:
+  - http, https
+tags:
+  - Exposure Values
+paths:
+  '/getExposureValue/{exposure}':
+    get:
+      operationId: getExposureValue
+      parameters:
+        - name: exposure
+          in: body
+          description: 'The name of the exposure factor (currently limited to pm25, ozone).'
+          required: true
+          type: string
+        - name: stime
+          in: body
+          description: >-
+            The starting date to obtain exposures for (example 1985-04-12 is
+            April 12th 1985). Currently time of day is ignored.
+          required: true
+          type: string
+        - name: etime
+          in: body
+          description: >-
+            The ending date to obtain exposures for (example 1985-04-13 is April
+            13th 1985). Currently time of day is ignored.
+          required: true
+          type: string
+        - name: loc
+          in: body
+          description: >-
+            A description of the location(s) to retrieve the exposure for.
+            Locaton may be a single geocoordinate (example
+            '35.720278,-79.176389') or a semicomma separated list of
+            geocoord:dayhours giving the start and ending hours on specific days
+            of the week at that location (example
+            '35.720278,-79.176389,Sa0813;35.720278,-79.176389,other') indicates
+            Saturdays from 8am to 1pm is at one location and all other times are
+            at another location. Hours should be in 24 hours time using 2
+            digits, days of the week should be the first two characters of the
+            day.If the day of the week does not appear then the time periods
+            apply to all days (example
+            '35.720278,-79.176389,0614,35.731944,-78.852778,1424') gives two
+            time periods for all days. If hours do not appear then the time
+            period applies to all hours of the day (example
+            '35.720278,-79.176389,Sa,35.731944,-78.852778,Su').
+          required: true
+          type: string
+        - name: tres
+          in: body
+          description: >-
+            The temporal resolution to use for results, should be one of 'hour'
+            or 'day'. Default is 'day'
+          required: false
+          type: string
+        - name: tstat
+          in: body
+          description: >-
+            The statistic to use for results, should be one of 'max', 'mean', or
+            'median'. Default is 'max'
+          required: false
+          type: string
+      produces:
+        - application/json
+      summary: Get exposure value for a given environmental factor
+      description: >-
+        Retrieve the computed exposure value for a given environmental exposure
+        factor, time period, and set of locations
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            items:
+              $ref: '#/definitions/Exposures'
+            type: array
+  '/exposureScore/{exposure}':
+    get:
+      operationId: getExposureScore
+      parameters:
+        - name: exposure
+          in: path
+          description: 'The name of the exposure factor (currently limited to pm25, ozone).'
+          required: true
+          type: string
+        - name: stime
+          in: query
+          description: >-
+            The starting date to obtain exposures for (example 1985-04-12 is
+            April 12th 1985). Currently time of day is ignored.
+          required: true
+          type: string
+        - name: etime
+          in: query
+          description: >-
+            The ending date to obtain exposures for (example 1985-04-13 is April
+            13th 1985). Currently time of day is ignored.
+          required: true
+          type: string
+        - name: loc
+          in: query
+          description: >-
+            A description of the location(s) to retrieve the exposure for.
+            Locaton may be a single geocoordinate (example
+            '35.720278,-79.176389') or a semicomma separated list of
+            geocoord:dayhours giving the start and ending hours on specific days
+            of the week at that location (example
+            '35.720278,-79.176389,Sa0813;35.720278,-79.176389,other') indicates
+            Saturdays from 8am to 1pm is at one location and all other times are
+            at another location. Hours should be in 24 hours time using 2
+            digits, days of the week should be the first two characters of the
+            day.If the day of the week does not appear then the time periods
+            apply to all days (example
+            '35.720278,-79.176389,0614,35.731944,-78.852778,1424') gives two
+            time periods for all days. If hours do not appear then the time
+            period applies to all hours of the day (example
+            '35.720278,-79.176389,Sa,35.731944,-78.852778,Su').
+          required: true
+          type: string
+        - name: tres
+          in: query
+          description: >-
+            The temporal resolution to use for results, should be one of 'hour'
+            or 'day'. Default is 'day'
+          required: false
+          type: string
+        - name: tscore
+          in: query
+          description: >-
+            The exposure score type to return. The accepted values vary by
+            exposure factor. For pm25 values are '7dayrisk', '14dayrisk' (NOT
+            COMPLETE)
+          required: false
+          type: string
+      produces:
+        - application/json
+      summary: Get exposure score for a given environmental factor
+      description: >-
+        Retrieve the computed exposure score for a given environmental exposure
+        factor, time period, and set of locations
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            items:
+              $ref: '#/definitions/Exposures'
+            type: array
+definitions:
+  Exposures:
+    properties:
+      values:
+        $ref: '#/definitions/Exposure'
+    type: object
+  Exposure:
+    properties:
+      stime:
+        example: starting time for the given measure
+        format: dateTime
+        type: string
+      value:
+        example: numerical or categorical depending upon type of value being requested
+        type: string
+      etime:
+        example: ending time for the given measure
+        format: dateTime
+        type: string
+    type: object
