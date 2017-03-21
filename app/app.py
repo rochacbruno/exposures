@@ -12,6 +12,7 @@ Todo:
     * Swagger definitions are not yet working. Incorporate.
     * You have to also use ``sphinx.ext.todo`` extension
 """
+import argparse
 import os
 import traceback
 from flask import Flask, jsonify, request
@@ -102,4 +103,8 @@ def get_exposure_score():
     ])
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--debug",   help="Mesos master host", action='store_true')
+    args = parser.parse_args()
+
+    app.run(debug=args.debug)
