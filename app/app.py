@@ -104,7 +104,9 @@ def get_exposure_score():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--debug",   help="Mesos master host", action='store_true')
+    parser.add_argument("--port",   help="Port to serve on")
+    parser.add_argument("--debug",   help="Activate debug mode", action='store_true')
     args = parser.parse_args()
 
-    app.run(debug=args.debug)
+    print ("port: {}".format (int(args.port)))
+    app.run(port=int(args.port), debug=args.debug, host='0.0.0.0')
