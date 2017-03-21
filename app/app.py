@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
+
 """NCATS Translator Environmental Exposures API.
 
-This application provides an smartAPI compliant endpoint for retrieving
+This application provides an smartAPI compliant endpoint for retrieving # -*- coding: utf-8 -*-
 environmental exposure data qualified by temporal and geographic constraints.
 
 It uses Flasgger which provides flexible support for combining Swagger and Flask.
@@ -83,7 +83,7 @@ def allow_origin(response):
 def get_exposure_value():
     """ Get exposure value. See swagger definition for further details. """
     validation = validate_request (request, 'exposureRequestSchema', 'swagger/getExposureValue.yml')
-    return jsonify([
+    return jsonify(data = [
         {
             'start-time' : 0,
             'value'      : 8 + 8,
@@ -96,7 +96,7 @@ def get_exposure_value():
 def get_exposure_score():
     """ Get exposure score. See swagger spec for further details. """
     validation = validate_request (request, 'exposureScoreRequestSchema', 'swagger/getExposureScore.yml')
-    return jsonify([
+    return jsonify(data = [
         {
             'start-time' : 0,
             'value'      : 8 + 8,
