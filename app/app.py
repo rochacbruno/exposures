@@ -13,12 +13,22 @@ Todo:
     * You have to also use ``sphinx.ext.todo`` extension
 """
 import argparse
+import logging
 import os
 import traceback
 from flask import Flask, jsonify, request
 from flask.views import MethodView
 from flasgger import Swagger
 from flasgger.utils import swag_from, validate, ValidationError
+
+class LoggingUtil(object):
+    @staticmethod
+    def init_logging (name):
+        FORMAT = '%(asctime)-15s %(filename)s %(funcName)s %(levelname)s: %(message)s'
+        logging.basicConfig(format=FORMAT, level=logging.INFO)
+        return logging.getLogger(name)
+
+logger = LoggingUtil.init_logging (__file__)
 
 app = Flask(__name__)
 
@@ -52,7 +62,6 @@ class ValidationError(Exception):
         if status_code is not None:
             self.status_code = status_code
         self.payload = payload
-
     def to_dict(self):
         rv = dict(self.payload or ())
         rv['message'] = self.message
@@ -83,32 +92,60 @@ def allow_origin(response):
 def get_exposure_value():
     """ Get exposure value. See swagger definition for further details. """
     validation = validate_request (request, 'exposureRequestSchema', 'swagger/getExposureValue.yml')
-    return jsonify(data = [
-        {
-            'start-time' : 0,
-            'value'      : 8 + 8,
-            'end-time'   : 0
-        }
-    ])
+    logging.info ("get_exposure_value()")
+    return database.get_exposure_value ()
 
 @app.route('/v1/getExposureScore', methods=['POST'], endpoint='should_be_v1_only_getExposureScore')
 @swag_from('swagger/getExposureScore.yml')
 def get_exposure_score():
     """ Get exposure score. See swagger spec for further details. """
     validation = validate_request (request, 'exposureScoreRequestSchema', 'swagger/getExposureScore.yml')
-    return jsonify(data = [
-        {
-            'start-time' : 0,
-            'value'      : 8 + 8,
-            'end-time'   : 0
-        }
-    ])
+    logging.info ("get_exposure_score()")
+    return database.get_exposure_value ()
+
+''' Test Data '''
+import csv
+from datetime import datetime
+import calendar
+class ExposuresDBStub (object):
+    def __init__(self):
+        self.data = []
+        with open('../data/sample_cmaq_output_updated.csv', 'r') as csvfile:
+            reader = csv.DictReader (csvfile)
+            for row in reader:
+                # ID,Lat,Lon,Col,Row,Date,O3_ppb,PM25_Primary_ugm3,PM25_Secondary_ugm3
+                # Raleigh,35.7795897,-78.6381787,122,50,2010-01-01 00:00:00,4.67542219161987,10.2763252258301,10.2763252258301
+                dt = datetime.strptime(row['Date'], '%Y-%m-%d %H:%M:%S')
+                t = calendar.timegm(dt.timetuple())
+                self.data.append ([
+                    float(row['Lat']),
+                    float(row['Lon']),
+                    t,
+                    row['PM25_Primary_ugm3'],
+                    row['PM25_Secondary_ugm3']
+                ])
+    def get_exposure_value (self):
+        return jsonify (self.data)
+    def get_exposure_score (self):
+        return jsonify (self.data)
+
+class DatabaseFactory (object):
+    def __init__(self, mode="test"):
+        self.mode = mode
+    def createDB (self):
+        return ExposuresDBStub ()
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--port",   help="Port to serve on")
-    parser.add_argument("--debug",   help="Activate debug mode", action='store_true')
+    parser.add_argument("--mode",  help="Database mode [test|prod]", default="test")
+    parser.add_argument("--port",  help="Port to serve on")
+    parser.add_argument("--debug", help="Activate debug mode", action='store_true')
     args = parser.parse_args()
 
-    print ("port: {}".format (int(args.port)))
-    app.run(port=int(args.port), debug=args.debug, host='0.0.0.0')
+    database_factory = DatabaseFactory (mode=args.mode)
+    database = database_factory.createDB ()
+
+    app.run (port = int(args.port),
+             debug = args.debug,
+             host = '0.0.0.0')
