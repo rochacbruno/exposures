@@ -67,7 +67,8 @@ parameters:
             period applies to all hours of the day (example
             '35.720278,-79.176389,Sa,35.731944,-78.852778,Su').
           required: [ "true" ]
-          default: '35.720278,-79.176389,Sa,35.731944,-78.852778,Su'
+          #default: '35.720278,-79.176389,Sa,35.731944,-78.852778,Su'
+          default: '35.7795897,-78.6381787,Sa,35.731944,-78.852778,Su'
           type: string
         tres:
           description: >-
