@@ -1,27 +1,11 @@
 Get environmental exposure value operation
 ---
-swagger: '2.0'
-info:
-  title: Exposure API
-  description: API for environmental exposure models for NIH Data Translator program
-  contact:
-    responsibleOrganization: Data Translator Green Team
-    responsibleDeveloper: Data Translator Green Team
-    email: help@renci.org
-    url: www.renci.org
-  termsOfService: None Available
-  version: 0.0.1
-host: exposures.renci.org
-basePath: /api
-schemes:
-  - [ "http", "https" ]
 tags:
   - Exposure
-operationId: getExposureValue
 parameters:
   - name: body
     in: body
-    required: true
+    required: [ "true" ]
     schema:
       id : exposureValueRequestSchema
       required:
@@ -100,29 +84,29 @@ responses:
         $ref: '#/definitions/Exposures'
         type: array
 
-#definitions:
-#  Exposures:
-#    properties:
-#      x:
-#        type: string
-#        example: "x"
+definitions:
+ - Exposures:
+    properties:
+      x:
+        type: string
+        example: "x"
 
-#    properties:
-#      values:
-#        $ref: '#/definitions/Exposure'
-#    type: object
+    properties:
+      values:
+        $ref: '#/definitions/Exposure'
+    type: object
 
-#  Exposure:
-#    properties:
-#      stime:
-#        example: starting time for the given measure
-#        format: dateTime
-#        type: string
-#      value:
-#        example: numerical or categorical depending upon type of value being requested
-#        type: string
-#      etime:
-#        example: ending time for the given measure
-#        format: dateTime
-#        type: string
-#    type: object        
+ - Exposure:
+    properties:
+      stime:
+        example: starting time for the given measure
+        format: dateTime
+        type: string
+      value:
+        example: numerical or categorical depending upon type of value being requested
+        type: string
+      etime:
+        example: ending time for the given measure
+        format: dateTime
+        type: string
+    type: object

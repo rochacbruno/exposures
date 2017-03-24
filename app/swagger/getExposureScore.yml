@@ -1,27 +1,11 @@
 Get environmental exposure value operation
 ---
-swagger: '2.0'
-info:
-  title: Exposure API
-  description: API for environmental exposure models for NIH Data Translator program
-  contact:
-    responsibleOrganization: Data Translator Green Team
-    responsibleDeveloper: Data Translator Green Team
-    email: help@renci.org
-    url: www.renci.org
-  termsOfService: None Available
-  version: 0.0.1
-host: exposures.renci.org
-basePath: /api
-schemes:
-  - [ "http", "https" ]
 tags:
   - Exposure
-operationId: getExposureScore
 parameters:
   - name: body
     in: body
-    required: true
+    required: [ "true" ]
     schema:
       id : exposureScoreRequestSchema
       required:
