@@ -5,7 +5,7 @@ tags:
 parameters:
   - name: body
     in: body
-    required: [ "true" ]
+    required: true
     schema:
       id : exposureValueRequestSchema
       required:
