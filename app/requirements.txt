@@ -1,0 +1,1 @@
+https://github.com/rochacbruno/flasgger/tarball/master
