@@ -148,7 +148,7 @@ def allow_origin(response):
 @swag_from('swagger/getExposureValue.yml')
 def get_exposure_value():
     """ Get exposure value. See swagger definition for further details. """
-    validate(request.json, 'exposureValueRequestSchema', 'swagger/getExposureValue.yml', root=__file__)
+    validate(request.json, 'exposureValueRequestSchema', 'swagger/getExposureValue.yml')
     logging.info("get_exposure_value({0})".format(request.json))
     return database.get_exposure_value(loc=request.json['loc'],
                                        stime=ExposureUtil.to_timestamp(request.json['stime']),
@@ -162,7 +162,7 @@ def get_exposure_value():
 @swag_from('swagger/getExposureScore.yml')
 def get_exposure_score():
     """ Get exposure score. See swagger spec for further details. """
-    validate(request.json, 'exposureScoreRequestSchema', 'swagger/getExposureScore.yml', root=__file__)
+    validate(request.json, 'exposureScoreRequestSchema', 'swagger/getExposureScore.yml')
     logging.info("get_exposure_score({0})".format(request.json))
     return database.get_exposure_score(loc=request.json['loc'],
                                        stime=ExposureUtil.to_timestamp(request.json['stime']),
