@@ -85,7 +85,7 @@ responses:
         type: array
 
 definitions:
- - Exposures:
+  Exposures:
     properties:
       x:
         type: string
@@ -96,7 +96,7 @@ definitions:
         $ref: '#/definitions/Exposure'
     type: object
 
- - Exposure:
+  Exposure:
     properties:
       stime:
         example: starting time for the given measure
